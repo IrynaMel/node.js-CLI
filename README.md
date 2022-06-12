@@ -1,3 +1,3 @@
 # node.js-CLI
 
-![alt text](https://ibb.co/Bj8jZ3F)
+![alt text](https://i.ibb.co/5vqv84w/image.png)
