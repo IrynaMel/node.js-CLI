@@ -5,6 +5,10 @@ const crypto = require("crypto");
 
 const contactsPath = path.join(__dirname, "db/contacts.json");
 
+const updateFile = async (data) => {
+  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
+};
+
 const listContacts = async () => {
   const data = await fs.readFile(contactsPath);
   const contacts = JSON.parse(data);
@@ -12,8 +16,7 @@ const listContacts = async () => {
 };
 
 const getContactById = async (contactId) => {
-  const data = await fs.readFile(contactsPath);
-  const contacts = JSON.parse(data);
+  const contacts = await listContacts();
   const result = contacts.find((item) => item.id === contactId);
   if (!result) {
     return null;
@@ -22,20 +25,18 @@ const getContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  const data = await fs.readFile(contactsPath);
-  const contacts = JSON.parse(data);
+  const contacts = await listContacts();
   const idx = contacts.findIndex((item) => item.id === contactId);
   if (idx === -1) {
     return null;
   }
   const newContacts = contacts.filter((_, index) => index !== idx);
-  await fs.writeFile(contactsPath, JSON.stringify(newContacts, null, 2));
+  await updateFile(newContacts);
   return contacts[idx];
 };
 
 const addContact = async (name, email, phone) => {
-  const data = await fs.readFile(contactsPath);
-  const contacts = JSON.parse(data);
+  const contacts = await listContacts();
   const newContact = {
     id: crypto.randomUUID(),
     name,
@@ -43,7 +44,7 @@ const addContact = async (name, email, phone) => {
     phone,
   };
   contacts.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  await updateFile(contacts);
   return contacts;
 };
 

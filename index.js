@@ -11,7 +11,8 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
     case "get":
       const contact = await contactsOperations.getContactById(id);
       if (!contact) {
-        console.warn(`no contact with ${id} id`);
+        throw Error(`Can't find contact id: ${id}`);
+        // console.warn(`no contact with ${id} id`);
       }
       console.log(contact);
       break;
@@ -27,6 +28,9 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
 
     case "remove":
       const removeContact = await contactsOperations.removeContact(id);
+      if (!removeContact) {
+        throw new Error(`Can't find contact id: ${id}`);
+      }
       console.log(removeContact);
       break;
 
@@ -46,4 +50,11 @@ program.parse(process.argv);
 
 const options = program.opts();
 
-invokeAction(options);
+const start = async (argv) => {
+  try {
+    await invokeAction(argv);
+  } catch (error) {
+    console.log(error);
+  }
+};
+start(options);
